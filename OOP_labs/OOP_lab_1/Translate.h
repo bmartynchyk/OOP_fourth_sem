@@ -18,14 +18,14 @@ public:
 	~CTranslate();
 
 	// Methods
-	void MakePair(char *, char *);
+	void MakePair(char *eng, char *ital);
 	void Print();
 	char *GetEng() const;
 	char *GetIta() const;
 
 	// Overaloaded operators
-	CTranslate & operator=(const CTranslate &);
-	bool operator<(const CTranslate &);
+	CTranslate & operator=(const CTranslate &obj);
+	bool operator<(const CTranslate &obj);
 
 };
 
