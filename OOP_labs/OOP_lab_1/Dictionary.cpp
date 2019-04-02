@@ -19,6 +19,7 @@ void SortByIta(list<CTranslate> &lst);
 void TranslateEng(const list<CTranslate> &lst, const char *eng);
 void TranslateIta(const list<CTranslate> &lst, const char *ita);
 
+
 int main() {
 	ifstream eng_ita("English-Italian.txt"); // Dictionary source
 	list<CTranslate> lst; // Container
@@ -50,8 +51,12 @@ int main() {
 	DelByIta(lst, "volpe");
 	ListAll(lst);
 
-	cout << "\n[SortByEng(lst)]:\n";
+	cout << "\n[Sort by English words]:\n";
 	SortByEng(lst);
+	ListAll(lst);
+
+	cout << "\n[Sort by Italian words]:\n";
+	SortByIta(lst);
 	ListAll(lst);
 
 	cout << "\n[Translate from English]:\n";
@@ -95,13 +100,24 @@ void DelByIta(list<CTranslate> &lst, const char *ita) {
 	}
 }
 
-// Sorting by english
+// Sorting by english words
 void SortByEng(list<CTranslate> &lst) {
 	lst.sort();
 }
 
-//!!
+// Sorting by italian words
 void SortByIta(list<CTranslate> &lst) {
+
+	// Using lambda expressions to perform sorting by italian words
+	lst.sort([](CTranslate &obj1, CTranslate &obj2) {
+		char *str1 = obj1.GetIta(), *str2 = obj2.GetIta();
+
+		// <0 => str2 < str1 => flase
+		// 0 => str2 == str1 => false
+		// >0 => str2 > str1 => true
+		if (strcmp(str2, str1) > 0) return true;
+		return false;
+	});
 }
 
 // Finds italian translation of english word

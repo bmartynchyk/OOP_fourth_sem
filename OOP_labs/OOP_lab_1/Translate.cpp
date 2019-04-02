@@ -25,7 +25,6 @@ CTranslate::~CTranslate() {
 
 
 // Public methods
-
 char *CTranslate::GetEng() const {
 	return eng;
 }
@@ -49,7 +48,6 @@ void CTranslate::MakePair(char *eng, char *ita) {
 }
 
 // Overloaded operators
-//!!
 CTranslate & CTranslate::operator=(const CTranslate &obj) {
 	if (NULL != this->eng) delete[] this->eng;
 	this->eng = new char[strlen(obj.eng) + 1];
@@ -63,9 +61,9 @@ CTranslate & CTranslate::operator=(const CTranslate &obj) {
 }
 
 bool CTranslate::operator<(const CTranslate &obj) {
-	// <0 => str1 < str2
-	// 0 => str1 == str2
-	// >0 => str1 > str2
+	// <0 => [str1 < str2] => false
+	// 0 => [str1 == str2] => false
+	// >0 => [str1 > str2] => true
 	if (strcmp(obj.eng, this->eng) > 0) return true;
 
 	return false;
