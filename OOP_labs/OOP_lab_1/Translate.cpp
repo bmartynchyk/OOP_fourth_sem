@@ -62,7 +62,11 @@ CTranslate & CTranslate::operator=(const CTranslate &obj) {
 	return *this;
 }
 
-//!!
 bool CTranslate::operator<(const CTranslate &obj) {
-	return (bool)strcmp(this->eng, obj.eng);
+	// <0 => str1 < str2
+	// 0 => str1 == str2
+	// >0 => str1 > str2
+	if (strcmp(obj.eng, this->eng) > 0) return true;
+
+	return false;
 }
