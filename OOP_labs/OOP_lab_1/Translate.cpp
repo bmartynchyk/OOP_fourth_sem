@@ -1,3 +1,15 @@
+/***************************************************************************************************
+* File:          Translate.cpp
+* Synopsis:      implementation of methods, constructors, destructors and overloaded operators of
+* class CTranslate. Forms module with file CTranslate.h. CTranslate class targeted for storing pairs
+* of English and Italian words and make some simple manipulation of them.
+* Related files: Translate.ch
+* Author:        Bohdan Martynchyk KV-74
+* Written:       31/03/2019
+* Last modified: 02/04/2019
+* Source:        https://github.com/bmartynchyk/OOP_fourth_sem
+***************************************************************************************************/
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "Translate.h"
@@ -16,6 +28,7 @@ CTranslate::CTranslate(const CTranslate &obj) {
 	this->ita = new char[strlen(obj.ita) + 1];
 	strcpy(this->ita, obj.ita);
 }
+
 
 // Destructor
 CTranslate::~CTranslate() {
@@ -46,6 +59,7 @@ void CTranslate::MakePair(char *eng, char *ita) {
 	this->ita = new char[strlen(ita) + 1];
 	strcpy(this->ita, ita);
 }
+
 
 // Overloaded operators
 CTranslate & CTranslate::operator=(const CTranslate &obj) {

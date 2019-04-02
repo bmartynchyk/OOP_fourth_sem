@@ -1,3 +1,15 @@
+/***************************************************************************************************
+* File:          Dictionary.cpp
+* Synopsis:      testing file for CTranslate class. In this file there are realization of functions
+* for working with list container which contains CTranslate objects. These files compiled and debug
+* in VS 2015. You also can freely download the source files from the link below. The version of
+* uploaded files could be different.
+* Author:        Bohdan Martynchyk KV-74
+* Written:       31/03/2019
+* Last modified: 02/04/2019
+* Source:        https://github.com/bmartynchyk/OOP_fourth_sem
+***************************************************************************************************/
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
@@ -6,11 +18,12 @@
 #include <list>
 
 #include "Translate.h"
-#define WSIZE 32
+#define WSIZE 32 // Max size for words in dictionary pairs
 
 using namespace std;
 
 
+// Function for working with container list, which contains CTranslate objects
 void ListAll(const list<CTranslate> &lst);
 void DelByEng(list<CTranslate> &lst, const char *eng);
 void DelByIta(list<CTranslate> &lst, const char *ita);
