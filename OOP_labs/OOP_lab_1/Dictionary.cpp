@@ -60,7 +60,7 @@ int main() {
 	DelByEng(lst, "lazy");
 	ListAll(lst);
 	
-	cout << "\n[Deleting 'vople']:\n";
+	cout << "\n[Deleting 'volpe']:\n";
 	DelByIta(lst, "volpe");
 	ListAll(lst);
 
