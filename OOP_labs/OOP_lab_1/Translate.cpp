@@ -6,7 +6,7 @@
 * Related files: Translate.ch
 * Author:        Bohdan Martynchyk KV-74
 * Written:       31/03/2019
-* Last modified: 02/04/2019
+* Last modified: 05/04/2019
 * Source:        https://github.com/bmartynchyk/OOP_fourth_sem
 ***************************************************************************************************/
 
@@ -62,7 +62,9 @@ void CTranslate::MakePair(char *eng, char *ita) {
 
 
 // Overloaded operators
-CTranslate & CTranslate::operator=(const CTranslate &obj) {
+CTranslate &CTranslate::operator=(const CTranslate &obj) {
+	if (this == &obj) return *this;
+
 	if (NULL != this->eng) delete[] this->eng;
 	this->eng = new char[strlen(obj.eng) + 1];
 	strcpy(this->eng, obj.eng);
