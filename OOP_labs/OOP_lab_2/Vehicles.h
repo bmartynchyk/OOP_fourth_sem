@@ -9,11 +9,12 @@
 //An abstract base class
 class CVehicle {
 public:
-	CVehicle();
-	CVehicle(int _id, int _v_type, double _average_speed, double _load_capacity, double _cost_per_mile) : 
-		average_speed(_average_speed), load_capacity(_load_capacity), cost_per_mile(_cost_per_mile), 
-		id(_id), v_type(_v_type) { };
 
+	// Constructors
+	CVehicle();
+	CVehicle(int _id, int _v_type, double _avr_speed, double _capacity, double _cost_per_mile);
+
+	// Methods
 	virtual void Display() = 0;
 
 	// The cost of transporting calculated like weight(kg)/dist(km). If carriage is carried out by
@@ -23,13 +24,13 @@ public:
 	// The time of transporting luggages. If carriage is carried out by car and parameter
 	//'dist' > 'max_distance' this function returns -1.
 	virtual double CalculateTime(int dist) = 0;
-	virtual int GetId() { return id; }
+	virtual int GetId();
 
 protected:
-	int v_type; //0 - car, 1 - train
+	int v_type; // 0 - car, 1 - train
 	int id;
-	double average_speed;
-	double load_capacity;
+	double avr_speed;
+	double capacity;
 	double cost_per_mile; // The cost weight(kg)/dist(km)
 };
 
@@ -40,19 +41,33 @@ protected:
 // Derived class from CVehicle class
 class CCar : public CVehicle {
 public:
+
+	// Constructors
+	CCar(int _id, int _v_type, std::string _make, double _avr_speed, double _cost_per_mile, 
+		double _capacity, int _max_dist) : CVehicle(_id, _v_type, _avr_speed, _capacity, _cost_per_mile),
+		make(_make), max_dist(_max_dist) { }
+
+	// Methods
 	void Display();
 	double CalculateCost(int weight, int dist);
 	double CalculateTime(int dist);
 	int GetId();
 
 protected:
-	int max_distance; // max distance without refueling
-	std::string make; //manufactorer
+	int max_dist; // Max distance without refueling
+	std::string make; // Manufactorer
 };
 
 // Derived class from CVehicle class
 class CTrain :public CVehicle {
 public:
+
+	// Constructors
+	CTrain(int _id, int _v_type, std::string _t_type, double _avr_speed, double _capacity,
+		double _cost_per_mile) : CVehicle(_id, _v_type, _avr_speed, _capacity, _cost_per_mile),
+		type(_t_type) { }
+
+	// Methods
 	void Display();
 	double CalculateCost(int weight, int dist);
 	double CalculateTime(int dist);
