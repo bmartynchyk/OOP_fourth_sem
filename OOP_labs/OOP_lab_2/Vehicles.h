@@ -43,9 +43,8 @@ class CCar : public CVehicle {
 public:
 
 	// Constructors
-	CCar(int _id, int _v_type, std::string _make, double _avr_speed, double _cost_per_mile, 
-		double _capacity, int _max_dist) : CVehicle(_id, _v_type, _avr_speed, _capacity, _cost_per_mile),
-		make(_make), max_dist(_max_dist) { }
+	CCar(int _id, int _v_type, std::string _make, double _avr_speed, double _cost_per_mile,
+		double _capacity, int _max_dist);
 
 	// Methods
 	void Display();
@@ -64,8 +63,7 @@ public:
 
 	// Constructors
 	CTrain(int _id, int _v_type, std::string _t_type, double _avr_speed, double _capacity,
-		double _cost_per_mile) : CVehicle(_id, _v_type, _avr_speed, _capacity, _cost_per_mile),
-		type(_t_type) { }
+		double _cost_per_mile);
 
 	// Methods
 	void Display();

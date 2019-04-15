@@ -7,6 +7,11 @@
 
 //The class which contains vehicles
 class CDepot {
+private:
+	bool IdIsUnique(int id);
+	bool DataIsCorrect(int id, std::string make_type, double capacity, double cost_per_mile,
+		double avr_speed);
+
 public:
 
 	// Constructors
@@ -14,8 +19,10 @@ public:
 
 	// Methods
 	bool loadDataFromCSV(std::string path);
-	void AddCar();
-	void AddTrain();
+	CVehicle* CDepot::AddCar(int id, std::string make, double capacity, double cost_per_mile,
+		double avr_speed, int max_dist);
+	CVehicle* CDepot::AddTrain(int id, std::string type, double capacity, double cost_per_mile,
+		double avr_speed);
 	void RemoveVehicle(int id);
 	void ShowAll();
 
@@ -26,7 +33,7 @@ public:
 	//'field' - can take value 'average_speed' or  'max_distance';
 	//'cond' - can take value 'le'(less or equal) or 'ge'(greater or equal)
 	//'value' - the value of required field
-	std::list< CVehicle*> SQL(const char *field, const char * cond, const char* value);
+	std::list<CVehicle*> SQL(const char *field, const char * cond, const char* value);
 
 	// Prints list, which returns method 'SQL'. For example:
 	//list<CVehicle*> rs = depot.SQL(“max_distance”, “ge”, “500”);
@@ -36,7 +43,7 @@ public:
 	void ChangeCostPerMile(int id, double newcost);
 
 private:
-	std::list< CVehicle *> vehicles;
+	std::list<CVehicle *> vehicles;
 };
 
 #endif // !_DEPOT_H_
