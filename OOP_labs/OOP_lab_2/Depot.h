@@ -23,13 +23,13 @@ public:
 		double avr_speed, int max_dist);
 	CVehicle* CDepot::AddTrain(int id, std::string type, double capacity, double cost_per_mile,
 		double avr_speed);
-	void RemoveVehicle(int id);
+	bool RemoveVehicle(int id);
 	void ShowAll();
 
 	// Database methods
 	CVehicle* FindCheapest(int weight, int dist);
 
-	// Returns list of records that satisfy the specified conditions. 
+	// Returns list of records that satisfy the specified conditions.
 	//'field' - can take value 'average_speed' or  'max_distance';
 	//'cond' - can take value 'le'(less or equal) or 'ge'(greater or equal)
 	//'value' - the value of required field

@@ -5,6 +5,9 @@
 #include <vector>
 #include <string>
 
+//
+// Base class
+//
 
 //An abstract base class
 class CVehicle {
@@ -17,7 +20,7 @@ public:
 	// Methods
 	virtual void Display() = 0;
 
-	// The cost of transporting calculated like weight(kg)/dist(km). If carriage is carried out by
+	// The cost of transporting 'weight'(kg) on 'dist'(km). If carriage is carried out by
 	//car and parameter 'dist' > 'max_distance' this function returns -1.
 	virtual double CalculateCost(int weight, int dist) = 0;
 
@@ -25,6 +28,9 @@ public:
 	//'dist' > 'max_distance' this function returns -1.
 	virtual double CalculateTime(int dist) = 0;
 	virtual int GetId();
+
+	virtual void SetCostPerMile(double newcost);
+
 
 protected:
 	int v_type; // 0 - car, 1 - train
@@ -50,6 +56,7 @@ public:
 	void Display();
 	double CalculateCost(int weight, int dist);
 	double CalculateTime(int dist);
+	void SetCostPerMile(double newcost);
 	int GetId();
 
 protected:
@@ -69,6 +76,7 @@ public:
 	void Display();
 	double CalculateCost(int weight, int dist);
 	double CalculateTime(int dist);
+	void SetCostPerMile(double newcost);
 	int GetId();
 
 protected:

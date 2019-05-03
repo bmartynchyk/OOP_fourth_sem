@@ -21,16 +21,16 @@ CDepot::CDepot(std::string file_path) {
 bool CDepot::DataIsCorrect(int id, std::string make_type, double capacity, double cost_per_mile,
 	double avr_speed) {
 	try {
-		if (!IdIsUnique(id)) throw "transport with such id already exist!";
-		if (0 >= capacity) throw "the value 'capacity' > 0 for all of transport!";
-		if (0 >= cost_per_mile) throw "the value 'cost_per_mile' > 0 for transport!";
-		if (0 >= avr_speed) throw "the value 'avr_speed' > 0 for transport!";
+		if (!IdIsUnique(id)) throw "vehicle with such id already exist!";
+		if (0 >= capacity) throw "the value 'capacity' > 0 for all vehicles!";
+		if (0 >= cost_per_mile) throw "the value 'cost_per_mile' > 0 for all vehicles!";
+		if (0 >= avr_speed) throw "the value 'avr_speed' > 0 for all vehicles!";
 
 		// Detecting whether the string 'make_type' has inappropriate expression by using
 		//regular expressions
 		std::regex reg("[A-z]{0,32}");
 		if (!std::regex_match(make_type, reg))
-			throw "the value 'make'/'type' has inappropriate expression!";
+			throw "'make'/'type' has inappropriate expression(sould be < 32 characters)!";
 
 		return true;
 	}
@@ -62,6 +62,13 @@ bool CDepot::loadDataFromCSV(std::string path) {
 		
 		std::ifstream file(path); // Checking the path string
 		if (!file.is_open()) throw "seems like path string is incorrect!";
+
+		// If call this function and list 'vehicles' contains data, If call this function and list 
+		//'vehicles' contains data, so this function clears list and upload new data from file.
+		if (!vehicles.empty()) {
+			vehicles.clear();
+			std::cout << "WARNING: list wasn't empty - old data removed and new uploaded from file!\n";
+		}
 
 		// Declaration variables
 		int vehicle_type = 0, id = 0, max_dist = 0;
@@ -122,7 +129,7 @@ CVehicle* CDepot::AddCar(int id, std::string make, double capacity, double cost_
 
 		if (!DataIsCorrect(id, make, capacity, cost_per_mile, avr_speed))
 			throw "correct your inputting data please!";
-		if (0 >= max_dist) throw "the value 'max_dist' > 0 for car!";
+		if (0 >= max_dist) throw "the value 'max_dist' should be > 0 for car!";
 			
 		vehicle = new CCar(id, 0, make, avr_speed, cost_per_mile, capacity, max_dist);
 		if (nullptr == vehicle) throw "cannot creating the object 'CCar'!";
@@ -156,12 +163,14 @@ CVehicle* CDepot::AddTrain(int id, std::string type, double capacity, double cos
 	}
 }
 
-void CDepot::RemoveVehicle(int id) {
+bool CDepot::RemoveVehicle(int id) {
 	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 		if ((*i)->GetId() == id) {
 			vehicles.erase(i);
-			break;
+			return true;
 		}
+
+	return false;
 }
 
 void CDepot::ShowAll() {
@@ -173,46 +182,78 @@ void CDepot::ShowAll() {
 //
 
 CVehicle *CDepot::FindCheapest(int weight, int dist) {
-	return nullptr;
+	try {
+		std::list<CVehicle*>::iterator cheapest = vehicles.begin();
+
+		for (auto itr : vehicles)
+			if ((*cheapest)->CalculateCost(weight, dist) > itr->CalculateCost(weight, dist))
+				*cheapest = itr;
+
+		//std::list<CVehicle*> res;
+		//res.push_back(*cheapest);
+
+		//std::cout << "\n\nThe cheapest:\n";
+		//ShowRecordSet(res);
+
+		return *cheapest;
+	}
+	catch (char *mes) {
+		std::cerr << "ERROR: " << mes << std::endl;
+		return nullptr;
+	}
 }
 
+// Returns a list of records matching the selection criteria. Variable 'field' can take:
+//'average_speed', 'max_distance'. Variable 'cond' can take values: 'le'(less or equal), 'ge'
+//(greater or equal). Variable 'value' - is value of corresponding field.
 std::list<CVehicle*> CDepot::SQL(const char * field, const char * cond, const char * value) {
+	try {
+		std::list<CVehicle*> res;
 
-	return std::list<CVehicle*>();
+		return res;
+	} //!!
+	catch (char *mes) {
+		std::cerr << "ERROR: " << mes << std::endl;
+		return std::list<CVehicle*>();
+	}
 }
 
+// Outputs rescords set 'rs'
 void CDepot::ShowRecordSet(std::list<CVehicle*> rs) {
-
+	for (auto itr : rs) itr->Display();
 }
 
+// Returns all available vehicles
 CVehicle *CDepot::VehiclesAvailable(double weight, double dist, double cost) {
+	try {
+		// The trucs in which 'dist' > 'max_dist' should be excepted
 
-	return nullptr;
+		//1) Check in abs class if 'weight' and 'cost' approach
+		//2) If not then go to next vehicle
+		//3) If it approachs then
+		//4) Make dynamic_cast to proper class
+		//5) If it is CTrain then push it into result list
+		//6) If it is CCar then compare 'dist' > 'max_dist'
+		//7) If true - push into result list, false - go to next vehicle
+	}
+	catch (char *mes) {
+		std::cerr << "ERROR: " << mes << std::endl;
+		return nullptr;
+	}
 }
 
 void CDepot::ChangeCostPerMile(int id, double newcost) {
+	try {
+		if (0 >= newcost) throw "the value 'newcost' > 0 for all vehicles!";
+		if (IdIsUnique(id)) throw "the vehicle with such id is not exist!";
 
+		for (auto itr : vehicles)
+			if (itr->GetId() == id) {
+				itr->SetCostPerMile(newcost);
+				break;
+			}
+	}
+	catch (char *mes) {
+		std::cerr << "ERROR: " << mes << std::endl;
+	}
 }
-
-
-//CVehicle *civ;
-//CCar *car = new CCar();
-//CTrain *train = new CTrain();
-//CCar *cr = nullptr;
-
-//civ = car;
-
-//vehicles.push_back(civ);
-//vehicles.push_back(train);
-//vehicles.push_back(car);
-
-
-//civ = vehicles.pop_back();
-
-//CVehicle *ci = vehicles.pop_back();
-
-//CCar *crr = dynamic_cast<CCar *>(vehicles.pop_back());
-
-
-//civ = dynamic_cast vehicles.pop_back();
-//return true;
