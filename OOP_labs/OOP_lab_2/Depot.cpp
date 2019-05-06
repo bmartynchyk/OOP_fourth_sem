@@ -48,11 +48,10 @@ bool CDepot::IdIsUnique(int id){
 	return true;
 }
 
-
 // P U B L I C   M E T H O D S
 
 //	Input file should has next structure in each row:
-//<id>;<vehicle type>;<make/type>;<load capacity>;<cost per mile>;<everage speed>;<max distance/nope>
+//<id>;<vehicle type>;<make/type>;<load capacity>;<cost per mile>;<average speed>;<max distance/nope>
 //	In case if we has truck so in this case in we look at third position as  make(manufacturer), 
 //in last position - max distance. In case if we have train third position is type of train, and 
 //last position - ebsent.
@@ -75,7 +74,6 @@ bool CDepot::loadDataFromCSV(std::string path) {
 		double avr_speed = 0, capacity = 0, cost_per_mile = 0;
 		std::string make_type; // Manufacturer or type of train
 		char str[WSIZE]; // String for extracting content from input file
-		CVehicle *new_vehicle = nullptr; // Pointer to base vehicle class
 
 		while (!file.eof()) {
 			file.getline(str, WSIZE, ';'); // Getting Id
@@ -84,36 +82,41 @@ bool CDepot::loadDataFromCSV(std::string path) {
 			vehicle_type = atoi(str);
 			file.getline(str, WSIZE, ';'); // Getting manufacturer of truck or type of train
 			make_type = str;
-			file.getline(str, WSIZE, ';'); // Getting average speed
-			avr_speed = atof(str);
 			file.getline(str, WSIZE, ';'); // Getting load capacity
 			capacity = atof(str);
+			file.getline(str, WSIZE, ';'); // Getting cost per mile
+			cost_per_mile = atof(str);
 
-			if (1 == vehicle_type) { // Checking if it is the last one
-				file.getline(str, WSIZE, '\n'); // Getting cost per mile
-				cost_per_mile = atof(str);
+			if (1 == vehicle_type) { // Checking if this record is the last one
+				file.getline(str, WSIZE, '\n'); // Getting average speed
+				avr_speed = atof(str);
 			}
 			else {
-				file.getline(str, WSIZE, ';'); // Getting cost per mile
-				cost_per_mile = atof(str);
+				file.getline(str, WSIZE, ';'); // Getting average speed
+				avr_speed = atof(str);
 				file.getline(str, WSIZE, '\n'); // Getting max distance for car
 				max_dist = atoi(str);
 			}
 
-			if (!DataIsCorrect(id, make_type, avr_speed, capacity, cost_per_mile)) {
-				std::cerr << "ERROR: object: [" << id << ";" << vehicle_type << ";" <<
-					make_type << ";" << capacity << ";" << avr_speed << ";" << 
+			// Perform errors
+			if (!DataIsCorrect(id, make_type, capacity, cost_per_mile, avr_speed)) {
+				std::cerr << "ERROR: object: [" << id << "; " << vehicle_type << "; " <<
+					make_type << "; " << capacity << "; " << avr_speed << "; " << 
+					cost_per_mile << "] is incorrect!\n";
+				continue;
+			}
+			else if (0 >= max_dist) {
+				std::cerr << "ERROR: the value 'max_dist' for car should be > 0!\n";
+				std::cerr << "ERROR: object: [" << id << "; " << vehicle_type << "; " <<
+					make_type << "; " << capacity << "; " << avr_speed << "; " <<
 					cost_per_mile << "] is incorrect!\n";
 				continue;
 			}
 
-			// If it is CCar call proper constructor
-			if (0 == vehicle_type) new_vehicle = new CCar(id, vehicle_type, make_type, avr_speed,
-				capacity, cost_per_mile, max_dist);
-			else new_vehicle = new CTrain(id, vehicle_type, make_type, avr_speed,
-				capacity, cost_per_mile);
-
-			vehicles.push_back(new_vehicle);
+			if (0 == vehicle_type) vehicles.push_back(new CCar(id, vehicle_type, make_type,
+				avr_speed, capacity, cost_per_mile, max_dist));
+			else vehicles.push_back(new CTrain(id, vehicle_type, make_type, avr_speed,
+				capacity, cost_per_mile));
 		}
 	}
 	catch(const char *mes) {
@@ -206,12 +209,27 @@ CVehicle *CDepot::FindCheapest(int weight, int dist) {
 // Returns a list of records matching the selection criteria. Variable 'field' can take:
 //'average_speed', 'max_distance'. Variable 'cond' can take values: 'le'(less or equal), 'ge'
 //(greater or equal). Variable 'value' - is value of corresponding field.
-std::list<CVehicle*> CDepot::SQL(const char * field, const char * cond, const char * value) {
+std::list<CVehicle*> CDepot::SQL(const char * field, const char * cond , const char * value) {
 	try {
 		std::list<CVehicle*> res;
+		std::regex reg("(\\d+)|(\\d+\\.\\d+)"); // Regular expression for checking number format
+
+		//Check if parameter 'value' in format <digits>.<at least one digit>
+		if (!std::regex_match(value, reg))
+			throw "'value' is not integer or float number(examples: 10.21, 43, 97.0)!";
+		if (!strstr(cond, "ge") && !strstr(cond, "le"))
+			throw "incorect parameter 'cond'(should be 'ge' or 'le')!";
+		if (strstr(field, "average_speed")) comparator = &CDepot::CmpByAvrSpeed;
+		else if (strstr(field, "max_distance")) comparator = &CDepot::CmpByMaxDist;
+		else throw "incorect parameter 'field'(should be 'average_speed' or 'max_distance')!";
+
+		for (auto obj : vehicles)
+			// If function 'strstr' finds a substring "ge"(>=) in 'cond' it means
+			//true(>=) by default, else - false(<=) or selected "le"(<=).
+			if ((this->*comparator)(obj, value, strstr(cond, "ge"))) res.push_back(obj);
 
 		return res;
-	} //!!
+	}
 	catch (char *mes) {
 		std::cerr << "ERROR: " << mes << std::endl;
 		return std::list<CVehicle*>();
@@ -256,4 +274,38 @@ void CDepot::ChangeCostPerMile(int id, double newcost) {
 	catch (char *mes) {
 		std::cerr << "ERROR: " << mes << std::endl;
 	}
+}
+
+
+// P R I V A T E   M E T H O D S
+
+// Compares object by 'average_speed' with '_val'. If 'obj' is CTrain or 
+//CCar - comparing.
+bool CDepot::CmpByAvrSpeed(CVehicle *obj, const char *_val, bool cond) {
+	double val = atof(_val);
+
+	if (CTrain *train = dynamic_cast<CTrain*>(obj)) {
+		if (train->GetAvrSpeed() >= val && cond) return true;
+		if (train->GetAvrSpeed() <= val && !cond) return true;
+	}
+	else if (CCar *car = dynamic_cast<CCar*>(obj)) {
+		if (car->GetAvrSpeed() >= val && cond) return true;
+		if (car->GetAvrSpeed() <= val && !cond) return true;
+	}
+
+	return false;
+}
+
+// Compares object by 'max_distance' with '_val'. If 'obj' is CCar - comparing,
+//if 'obj' is CTrain - return false because CTrain has no field 'max_distance'.
+bool CDepot::CmpByMaxDist(CVehicle *obj, const char *_val, bool cond) {
+	double val = atoi(_val);
+
+	if (dynamic_cast<CTrain*>(obj)) return false;
+	else if (CCar *car = dynamic_cast<CCar*>(obj)) {
+		if (car->GetMaxDist() >= val && cond) return true;
+		if (car->GetMaxDist() <= val && !cond) return true;
+	}
+
+	return false;
 }

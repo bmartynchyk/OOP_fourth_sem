@@ -52,17 +52,27 @@ void main() {
 	depot.ShowAll();*/
 
 	// TEST 4
-	CDepot depot("Input.csv");
+	/*CDepot depot("Input.csv");
 	std::list<CVehicle*> res;
 	depot.ShowAll();
 	CVehicle *veh = depot.FindCheapest(1, 8001);
 	res.push_back(veh);
 	cout << "\n\nCheapest:\n";
-	depot.ShowRecordSet(res);
+	depot.ShowRecordSet(res);*/
 
-	//depot.ChangeCostPerMile(0, 12.12);
-	//if (depot.AddTrain(4, "Diesel", 125000, 12, 75))
-	//	cout << "Added succesfully!\n";
+	// TEST 5
+	/*CDepot depot("Input.csv");
+	depot.ChangeCostPerMile(2, 32.12);
+	depot.ShowAll();*/
+
+	// TEST 6
+	// If selected field 'max_distance' all 'CTtain' objects will be skipped because of they
+	//have no such field
+	CDepot depot("Input.csv");
+	string field = "average_speed", cond = "ge", value = "55";
+	depot.ShowAll();
+	cout << "\n\nSELECT vehicles with params: [" << field << ", " << cond << ", "  << value << "]:\n";
+	depot.ShowRecordSet(depot.SQL(field.c_str(), cond.c_str(), value.c_str()));
 
 	system("pause");
 }

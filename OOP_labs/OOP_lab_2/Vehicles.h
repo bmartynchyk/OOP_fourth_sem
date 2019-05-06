@@ -31,7 +31,6 @@ public:
 
 	virtual void SetCostPerMile(double newcost);
 
-
 protected:
 	int v_type; // 0 - car, 1 - train
 	int id;
@@ -58,6 +57,8 @@ public:
 	double CalculateTime(int dist);
 	void SetCostPerMile(double newcost);
 	int GetId();
+	double GetAvrSpeed();
+	int GetMaxDist();
 
 protected:
 	int max_dist; // Max distance without refueling
@@ -78,6 +79,7 @@ public:
 	double CalculateTime(int dist);
 	void SetCostPerMile(double newcost);
 	int GetId();
+	double GetAvrSpeed();
 
 protected:
 	std::string type; //diesel / electrical

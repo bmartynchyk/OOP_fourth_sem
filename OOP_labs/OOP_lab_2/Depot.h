@@ -12,6 +12,13 @@ private:
 	bool DataIsCorrect(int id, std::string make_type, double capacity, double cost_per_mile,
 		double avr_speed);
 
+	// Two methods for comparing values in 'SQL' method
+	bool CmpByAvrSpeed(CVehicle *obj, const char *_val, bool cond);
+	bool CmpByMaxDist(CVehicle *obj, const char *_val, bool cond);
+	
+	// Pointer to class member function for 'SQL' method
+	bool(CDepot::*comparator)(CVehicle *obj, const char *_val, bool cond);
+
 public:
 
 	// Constructors

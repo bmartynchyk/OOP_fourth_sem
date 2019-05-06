@@ -61,6 +61,10 @@ void CCar::SetCostPerMile(double newcost) {
 	cost_per_mile = newcost;
 }
 
+double CCar::GetAvrSpeed() { return avr_speed; }
+
+int CCar::GetMaxDist() { return max_dist; }
+
 #pragma endregion
 
 
@@ -91,5 +95,7 @@ int CTrain::GetId() { return id; }
 void CTrain::SetCostPerMile(double newcost) {
 	cost_per_mile = newcost;
 }
+
+double CTrain::GetAvrSpeed() { return avr_speed; }
 
 #pragma endregion
