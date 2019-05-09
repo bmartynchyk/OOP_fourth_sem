@@ -28,7 +28,7 @@ bool CDepot::DataIsCorrect(int id, std::string make_type, double capacity, doubl
 
 		// Detecting whether the string 'make_type' has inappropriate expression by using
 		//regular expressions
-		std::regex reg("[A-z]{0,32}");
+		std::regex reg("[A-z ]{0,32}");
 		if (!std::regex_match(make_type, reg))
 			throw "'make'/'type' has inappropriate expression(sould be < 32 characters)!";
 
@@ -80,7 +80,7 @@ bool CDepot::loadDataFromCSV(std::string path) {
 			id = atoi(str);
 			file.getline(str, WSIZE, ';'); // Getting vehicle type
 			vehicle_type = atoi(str);
-			file.getline(str, WSIZE, ';'); // Getting manufacturer of truck or type of train
+			file.getline(str, WSIZE, ';'); // Getting manufacturer for truck or type for train
 			make_type = str;
 			file.getline(str, WSIZE, ';'); // Getting load capacity
 			capacity = atof(str);
@@ -101,22 +101,22 @@ bool CDepot::loadDataFromCSV(std::string path) {
 			// Perform errors
 			if (!DataIsCorrect(id, make_type, capacity, cost_per_mile, avr_speed)) {
 				std::cerr << "ERROR: object: [" << id << "; " << vehicle_type << "; " <<
-					make_type << "; " << capacity << "; " << avr_speed << "; " << 
-					cost_per_mile << "] is incorrect!\n";
+					make_type << "; " << capacity << "; " << cost_per_mile << "; " <<
+					avr_speed << "] is incorrect!\n";
 				continue;
 			}
 			else if (0 >= max_dist) {
 				std::cerr << "ERROR: the value 'max_dist' for car should be > 0!\n";
 				std::cerr << "ERROR: object: [" << id << "; " << vehicle_type << "; " <<
-					make_type << "; " << capacity << "; " << avr_speed << "; " <<
-					cost_per_mile << "] is incorrect!\n";
+					make_type << "; " << capacity << "; " << cost_per_mile << "; " <<
+					avr_speed << "] is incorrect!\n";
 				continue;
 			}
 
-			if (0 == vehicle_type) vehicles.push_back(new CCar(id, vehicle_type, make_type,
-				avr_speed, capacity, cost_per_mile, max_dist));
-			else vehicles.push_back(new CTrain(id, vehicle_type, make_type, avr_speed,
-				capacity, cost_per_mile));
+			if (0 == vehicle_type) vehicles.push_back(new CCar(id, make_type, capacity, 
+				cost_per_mile, avr_speed, max_dist));
+			else vehicles.push_back(new CTrain(id, make_type, capacity,
+				cost_per_mile, avr_speed));
 		}
 	}
 	catch(const char *mes) {
@@ -134,7 +134,7 @@ CVehicle* CDepot::AddCar(int id, std::string make, double capacity, double cost_
 			throw "correct your inputting data please!";
 		if (0 >= max_dist) throw "the value 'max_dist' should be > 0 for car!";
 			
-		vehicle = new CCar(id, 0, make, avr_speed, cost_per_mile, capacity, max_dist);
+		vehicle = new CCar(id, make, capacity, cost_per_mile, avr_speed, max_dist);
 		if (nullptr == vehicle) throw "cannot creating the object 'CCar'!";
 
 		vehicles.push_back(vehicle);
@@ -154,7 +154,7 @@ CVehicle* CDepot::AddTrain(int id, std::string type, double capacity, double cos
 		if (!DataIsCorrect(id, type, capacity, cost_per_mile, avr_speed))
 			throw "correct your inputting data please!";
 
-		vehicle = new CTrain(id, 0, type, avr_speed, cost_per_mile, capacity);
+		vehicle = new CTrain(id, type, capacity, cost_per_mile, avr_speed);
 		if (nullptr == vehicle) throw "cannot creating the object 'CTrain'!";
 
 		vehicles.push_back(vehicle);
@@ -167,6 +167,7 @@ CVehicle* CDepot::AddTrain(int id, std::string type, double capacity, double cos
 }
 
 bool CDepot::RemoveVehicle(int id) {
+	// auto - std::list<CVehicle*>::iterator
 	for (auto i = vehicles.begin(); i != vehicles.end(); ++i)
 		if ((*i)->GetId() == id) {
 			vehicles.erase(i);
@@ -180,23 +181,29 @@ void CDepot::ShowAll() {
 	for (auto itr : vehicles) itr->Display();
 }
 
-//
-// Database methods
-//
-
 CVehicle *CDepot::FindCheapest(int weight, int dist) {
 	try {
 		std::list<CVehicle*>::iterator cheapest = vehicles.begin();
+		int cost = 0;
 
+		// Initialization of cheapest vehicle
 		for (auto itr : vehicles)
-			if ((*cheapest)->CalculateCost(weight, dist) > itr->CalculateCost(weight, dist))
-				*cheapest = itr;
+			// 'CalculateCost' will check the validity of such weight and distance for 
+			//vehicles. In bad case 'CalculateCost' returns -1.
+			if (itr->CalculateCost(weight, dist) != -1) {
+				*cheapest = itr; // Initialization
+				break;
+			}
 
-		//std::list<CVehicle*> res;
-		//res.push_back(*cheapest);
+		// If cheapest vehicle is not initialized with the correct value, then there is
+		//no point in continuing to search for the chepest vehicle.
+		if ((*cheapest)->CalculateCost(weight, dist) == -1) return nullptr;
 
-		//std::cout << "\n\nThe cheapest:\n";
-		//ShowRecordSet(res);
+		// Trying to find cheapest vehicle
+		for (auto itr = cheapest; itr != vehicles.end(); ++itr) {
+			if ((cost = (*itr)->CalculateCost(weight, dist)) == -1) continue;
+			if ((*cheapest)->CalculateCost(weight, dist) > cost) cheapest = itr;
+		}
 
 		return *cheapest;
 	}
@@ -238,25 +245,23 @@ std::list<CVehicle*> CDepot::SQL(const char * field, const char * cond , const c
 
 // Outputs rescords set 'rs'
 void CDepot::ShowRecordSet(std::list<CVehicle*> rs) {
+	if (rs.empty()) return;
 	for (auto itr : rs) itr->Display();
 }
 
 // Returns all available vehicles
-CVehicle *CDepot::VehiclesAvailable(double weight, double dist, double cost) {
+std::list<CVehicle*> CDepot::VehiclesAvailable(double weight, double dist, double cost) {
 	try {
-		// The trucs in which 'dist' > 'max_dist' should be excepted
+		std::list<CVehicle*> res;
 
-		//1) Check in abs class if 'weight' and 'cost' approach
-		//2) If not then go to next vehicle
-		//3) If it approachs then
-		//4) Make dynamic_cast to proper class
-		//5) If it is CTrain then push it into result list
-		//6) If it is CCar then compare 'dist' > 'max_dist'
-		//7) If true - push into result list, false - go to next vehicle
+		for (auto obj : vehicles)
+			if (cost >= obj->CalculateCost(weight, dist)) res.push_back(obj);
+
+		return res;
 	}
 	catch (char *mes) {
 		std::cerr << "ERROR: " << mes << std::endl;
-		return nullptr;
+		return std::list<CVehicle*>();
 	}
 }
 
@@ -279,7 +284,7 @@ void CDepot::ChangeCostPerMile(int id, double newcost) {
 
 // P R I V A T E   M E T H O D S
 
-// Compares object by 'average_speed' with '_val'. If 'obj' is CTrain or 
+// Compares object by 'average_speed' with '_val'. If 'obj' is CTrain or
 //CCar - comparing.
 bool CDepot::CmpByAvrSpeed(CVehicle *obj, const char *_val, bool cond) {
 	double val = atof(_val);

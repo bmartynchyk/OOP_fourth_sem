@@ -15,7 +15,7 @@ public:
 
 	// Constructors
 	CVehicle();
-	CVehicle(int _id, int _v_type, double _avr_speed, double _capacity, double _cost_per_mile);
+	CVehicle(int _id, int _v_type, double _capacity, double _cost_per_mile, double _avr_speed);
 
 	// Methods
 	virtual void Display() = 0;
@@ -32,11 +32,11 @@ public:
 	virtual void SetCostPerMile(double newcost);
 
 protected:
-	int v_type; // 0 - car, 1 - train
 	int id;
-	double avr_speed;
+	int v_type; // 0 - car, 1 - train
 	double capacity;
 	double cost_per_mile; // The cost weight(kg)/dist(km)
+	double avr_speed;
 };
 
 //
@@ -48,8 +48,8 @@ class CCar : public CVehicle {
 public:
 
 	// Constructors
-	CCar(int _id, int _v_type, std::string _make, double _avr_speed, double _cost_per_mile,
-		double _capacity, int _max_dist);
+	CCar(int _id, std::string _make, double _capacity, double _cost_per_mile,
+		double _avr_speed, int _max_dist);
 
 	// Methods
 	void Display();
@@ -62,7 +62,7 @@ public:
 
 protected:
 	int max_dist; // Max distance without refueling
-	std::string make; // Manufactorer
+	std::string make; // Manufacturer
 };
 
 // Derived class from CVehicle class
@@ -70,8 +70,7 @@ class CTrain :public CVehicle {
 public:
 
 	// Constructors
-	CTrain(int _id, int _v_type, std::string _t_type, double _avr_speed, double _capacity,
-		double _cost_per_mile);
+	CTrain(int _id, std::string _type, double _capacity, double _cost_per_mile, double _avr_speed);
 
 	// Methods
 	void Display();

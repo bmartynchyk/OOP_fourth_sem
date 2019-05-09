@@ -26,9 +26,9 @@ public:
 
 	// Methods
 	bool loadDataFromCSV(std::string path);
-	CVehicle* CDepot::AddCar(int id, std::string make, double capacity, double cost_per_mile,
-		double avr_speed, int max_dist);
-	CVehicle* CDepot::AddTrain(int id, std::string type, double capacity, double cost_per_mile,
+	CVehicle* AddCar(int id, std::string make, double capacity, double cost_per_mile, double avr_speed,
+		int max_dist);
+	CVehicle* AddTrain(int id, std::string type, double capacity, double cost_per_mile,
 		double avr_speed);
 	bool RemoveVehicle(int id);
 	void ShowAll();
@@ -46,7 +46,7 @@ public:
 	//list<CVehicle*> rs = depot.SQL(“max_distance”, “ge”, “500”);
 	//depot.ShowRecordSet(rs);
 	void ShowRecordSet(std::list<CVehicle*> rs);
-	CVehicle* VehiclesAvailable(double weight, double dist, double cost);
+	std::list<CVehicle*> VehiclesAvailable(double weight, double dist, double cost);
 	void ChangeCostPerMile(int id, double newcost);
 
 private:

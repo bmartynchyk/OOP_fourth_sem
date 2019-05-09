@@ -14,9 +14,9 @@
 // Constructors
 CVehicle::CVehicle() : id(0), v_type(0), avr_speed(0), capacity(0), cost_per_mile(0) { }
 
-CVehicle::CVehicle(int _id, int _v_type, double _avr_speed, double _capacity, double _cost_per_mile) :
-	avr_speed(_avr_speed), capacity(_capacity), cost_per_mile(_cost_per_mile),
-	id(_id), v_type(_v_type) { };
+CVehicle::CVehicle(int _id, int _v_type, double _capacity, double _cost_per_mile, 
+	double _avr_speed) : id(_id), v_type(_v_type), capacity(_capacity), 
+	cost_per_mile(_cost_per_mile), avr_speed(_avr_speed) { };
 
 // Methods
 int CVehicle::GetId() { return id; }
@@ -35,8 +35,8 @@ void CVehicle::SetCostPerMile(double newcost) {
 #pragma region CCar class
 
 // Constructors
-CCar::CCar(int _id, int _v_type, std::string _make, double _avr_speed, double _cost_per_mile,
-	double _capacity, int _max_dist) : CVehicle(_id, _v_type, _avr_speed, _capacity, _cost_per_mile),
+CCar::CCar(int _id, std::string _make, double _capacity, double _cost_per_mile, double _avr_speed,
+	int _max_dist) : CVehicle(_id, 0, _capacity, _cost_per_mile, _avr_speed),
 	make(_make), max_dist(_max_dist) { }
 
 // Methods
@@ -47,6 +47,7 @@ void CCar::Display() {
 
 double CCar::CalculateCost(int weight, int dist) {
 	if (dist > max_dist) return -1.0;
+	if (weight > capacity) return -1.0;
 	return weight * cost_per_mile * dist;
 }
 
@@ -72,9 +73,8 @@ int CCar::GetMaxDist() { return max_dist; }
 #pragma region CTrain class
 
 // Constructors
-CTrain::CTrain(int _id, int _v_type, std::string _t_type, double _avr_speed, double _capacity, 
-	double _cost_per_mile) : CVehicle(_id, _v_type, _avr_speed, _capacity, _cost_per_mile),
-	type(_t_type) { }
+CTrain::CTrain(int _id, std::string _type, double _capacity, double _cost_per_mile, 
+	double _avr_speed) : CVehicle(_id, 1, _capacity, _cost_per_mile, _avr_speed), type(_type) { }
 
 // Methods
 void CTrain::Display() {
@@ -83,7 +83,8 @@ void CTrain::Display() {
 }
 
 double CTrain::CalculateCost(int weight, int dist) {
-	return weight *cost_per_mile * dist;
+	if (weight > capacity) return -1.0;
+	return weight * cost_per_mile * dist;
 }
 
 double CTrain::CalculateTime(int dist) {
