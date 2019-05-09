@@ -1,3 +1,13 @@
+/***************************************************************************************************
+* File:          Vehicles.h
+* Synopsis:      declaration of methods and constructors of CDepot class. Forms module with file 
+* Vehicles.cpp.
+* Related files: Vehicles.cpp
+* Author:        Bohdan Martynchyk KV-74
+* Written:       12/04/2019
+* Last modified: 08/05/2019
+* Source:        https://github.com/bmartynchyk/OOP_fourth_sem
+***************************************************************************************************/
 
 #ifndef _VEHICLES_H_
 #define _VEHICLES_H_

@@ -1,3 +1,14 @@
+/***************************************************************************************************
+* File:          Depot.cpp
+* Synopsis:      implementation of methods, constructors classes CDepot. Forms module with file 
+* CDepot.h. CDepot - class for primitive manipulation of vehicles in vehicle depot. It contains list
+* of CVehicle objects wich can be CCar or CTrain class. This class helps to find necessary vehicles.
+* Related files: Depot.h
+* Author:        Bohdan Martynchyk KV-74
+* Written:       12/04/2019
+* Last modified: 08/05/2019
+* Source:        https://github.com/bmartynchyk/OOP_fourth_sem
+***************************************************************************************************/
 
 #include <iostream>
 #include <fstream>

@@ -1,4 +1,14 @@
-
+/***************************************************************************************************
+* File:          Vehicles.cpp
+* Synopsis:      implementation of methods and constructors of classes CCar, CTrain, CVehicle. Forms
+* module with file Vehicles.h. CVehicles class - base class for CCar and CTrain class. It helps
+* represents all vehicles in the depot.
+* Related files: Vehicles.h
+* Author:        Bohdan Martynchyk KV-74
+* Written:       12/04/2019
+* Last modified: 08/05/2019
+* Source:        https://github.com/bmartynchyk/OOP_fourth_sem
+***************************************************************************************************/
 
 #include <iostream>
 #include <cstring>

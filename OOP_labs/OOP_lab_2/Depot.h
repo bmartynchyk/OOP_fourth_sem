@@ -1,3 +1,13 @@
+/***************************************************************************************************
+* File:          Depot.h
+* Synopsis:      declaration of methods, constructors of class CDepot. Forms module with file 
+* Depot.cpp.
+* Related files: Depot.cpp
+* Author:        Bohdan Martynchyk KV-74
+* Written:       12/04/2019
+* Last modified: 08/05/2019
+* Source:        https://github.com/bmartynchyk/OOP_fourth_sem
+***************************************************************************************************/
 
 #ifndef _DEPOT_H_
 #define _DEPOT_H_

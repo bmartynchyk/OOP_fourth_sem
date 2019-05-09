@@ -1,3 +1,14 @@
+/***************************************************************************************************
+* File:          main.cpp
+* Synopsis:      testing file for CDepot class. There are 7 tests for CDepot class. These files 
+* compiled and debug in VS 2015. You also can freely download the source files from the link below. 
+* The version of uploaded files could be different.
+* Author:        Bohdan Martynchyk KV-74
+* Written:       12/04/2019
+* Last modified: 08/05/2019
+* Source:        https://github.com/bmartynchyk/OOP_fourth_sem
+***************************************************************************************************/
+
 #include <iostream>
 #include "Depot.h"
 

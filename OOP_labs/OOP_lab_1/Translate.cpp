@@ -3,7 +3,7 @@
 * Synopsis:      implementation of methods, constructors, destructors and overloaded operators of
 * class CTranslate. Forms module with file CTranslate.h. CTranslate class targeted for storing pairs
 * of English and Italian words and make some simple manipulation of them.
-* Related files: Translate.ch
+* Related files: Translate.h
 * Author:        Bohdan Martynchyk KV-74
 * Written:       31/03/2019
 * Last modified: 05/04/2019
