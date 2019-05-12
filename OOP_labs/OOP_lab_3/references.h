@@ -8,17 +8,31 @@ class References {
 
 private:
 	char *word;
-	int *pages;//pages numbers
-	int _size;//number of pages
+	int *pages; // Pages numbers
+	int _size; // Number of pages
 
 public:
 
-	// Constructor 
-	References();
+	//
+	// Constructors
+	//
 
-	/*
-	methods
-	*/
+	References(const char *wrd, int pages_nmb, int *pages); 
+
+	//
+	// Public methods
+	//
+
+	//
+	bool SetNewWord(const char *newwrd);
+
+	//
+	bool SetNewPages(int num, int* _pages);
+	
+	//
+	// Overloaded operators
+	//
+
 	friend std::ostream& operator<<(std::ostream& stream, References &obj);
 };
 

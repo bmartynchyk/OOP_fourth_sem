@@ -1,6 +1,11 @@
 #include "list.h"
 #include "references.h"
 #include <iostream>
+#include <fstream>
+
+#define WSIZE 32
+
+using namespace std;
 
 // Delete reference from list 'lst' if the number of pages less then 'page_numb'
 void DeleteRef(List<References> &lst,  int page_numb) {
@@ -26,13 +31,69 @@ void RestoreRef(List<References> &lst, List<References> &trash) {
 }
 
 // Uploads references from file 'fname' to list 'lst'
-void UploadRefFromFile(char *fname, List<References> &lst) {
+bool UploadRefFromFile(const char *path, List<References*> &lst) {
+	try {
+		if (0 == strlen(path)) throw "path string is empty!";
 
+		std::ifstream file(path); // Checking the path string
+		if (!file.is_open()) throw "seems like path string is incorrect!";
+
+		//if (lst.empty()) {
+		//	lst.clear();
+		//	std::cout << "WARNING: list wasn't empty - old data removed and new uploaded from file!\n";
+		//}
+
+		int *pages = nullptr, num = 0, i = 0; // Declaration variables
+		char *word = nullptr, str[WSIZE];
+
+		while (!file.eof()) {
+			file.getline(str, WSIZE, ';'); // Getting 'word'
+			word = _strdup(str);
+			file.getline(str, WSIZE, ';'); // Getting 'num' of pages
+			num = atoi(str);
+
+			pages = new int[num];
+
+			for (i = 0; i < num - 1; i++) {
+				if (!file.getline(str, WSIZE, ';')) {
+					delete[] pages; free(word); // memory release
+					std::cerr << "invalid pages number, with reference: '" << word << "'!";
+					return false;
+				}
+
+				pages[i] = atoi(str);
+			}
+			file.getline(str, WSIZE, '\n');
+			pages[num - 1] = atoi(str);
+
+			References *ref = new References(word, num, pages);
+			delete[] pages; // because of 'new' operator
+			free(word); // because of '_strdup()' function
+
+			cout << *ref <<"\n";
+		}
+
+		//lst.push_front();
+		return true;
+	}
+	catch (const char *mes) {
+		std::cerr << "ERROR: " << mes << std::endl;
+		return false;
+	}
 }
 
+
+
 void main() {
-	List<References> list;
+	List<References*> list;
 	List<References> trash;
+
+	int d[] = { 1, 2, 34, 5 };
+	References ref("str", 4, d);
+	cout << ref << "\n\n";
+
+	UploadRefFromFile("Input.csv", list);
+
 
 	system("pause");
 }

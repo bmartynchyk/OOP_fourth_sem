@@ -9,7 +9,7 @@ template<class T> class List {
 
 	struct ListNode {
 		T data;
-		ListNode * next;
+		ListNode *next;
 
 		ListNode() {
 			next = NULL;
@@ -41,10 +41,14 @@ public:
 	//
 
 	// Returns an iterator addressing the first element
-	iterator begin();
+	iterator begin() {
+		return first;
+	}
 
 	// Returns an iterator that addresses the location succeeding the last element
-	iterator end();
+	iterator end() {
+		return last;
+	}
 
 	// Erases all the elements of a list
 	void clear() {
@@ -53,7 +57,7 @@ public:
 
 	// Tests if a list is empty
 	bool empty() {
-		return false;
+		return head;
 	}
 
 	// Returns an iterator to the first element in a list that match a specified value
