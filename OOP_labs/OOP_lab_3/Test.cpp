@@ -2,7 +2,8 @@
 #include "references.h"
 #include <iostream>
 #include <fstream>
-//#include <list>
+
+#include <list>
 
 #define WSIZE 32
 
@@ -111,6 +112,27 @@ void main() {
 	lst.push_front(*ref);
 	ref = new References("str222", 4, d2);
 	lst.push_front(*ref);
+
+	ref = new References("str111", 4, d1);
+
+	lst.remove(*ref);
+
+	//lst.pop_front();
+	//lst.pop_front();
+	//lst.pop_front();
+
+	List<References>::iterator i = lst.begin();
+
+	//std::list<References> loo;
+	//loo.push_front(*ref);
+
+	//std::list<References>::iterator i = loo.begin();
+
+	cout << **i << "\n";
+
+	//ref = &(**i);
+
+	//cout << *ref << "\n";
 
 	system("pause");
 }

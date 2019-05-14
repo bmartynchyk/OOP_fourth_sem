@@ -8,8 +8,6 @@
 
 
 // L I S T   C L A S S   D E C L A R A T I O N
-#pragma region List class declaration
-
 template<class T> class List {
 
 	struct ListNode {
@@ -24,6 +22,15 @@ template<class T> class List {
 		}
 		void Print() {
 			std::cout << data;
+		}
+
+		T operator*() { //!!
+			return data;
+		}
+
+		bool operator==(ListNode &node) {
+			return (data == node.data && 
+				next == node.next);
 		}
 	};
 
@@ -63,8 +70,6 @@ private:
 	iterator *first, *last;
 };
 
-#pragma endregion
-
 
 
 // L I S T   C L A S S   I M P L E M E N T A T I O N
@@ -72,8 +77,8 @@ private:
 
 
 // Constructors/Destructors
-template<class T> List<T>::List() {
-
+template<class T> List<T>::List(): first(nullptr), last(nullptr) {
+	head = nullptr;
 }
 
 template<class T> List<T>::~List() {
@@ -92,7 +97,7 @@ typename List<T>::iterator List<T>::begin() {
 
 template<class T>
 typename List<T>::iterator List<T>::end() {
-	return iterator(nullptr);
+	return *last;
 }
 
 template<class T>
@@ -114,31 +119,43 @@ bool List<T>::empty() {
 // Adding/Deleting elements of list
 template<class T>
 void List<T>::push_front(const T val) {
-	if (node_type *node = new node_type(val)) {
-		node->next = head;
+	try {
+		if (node_type *node = new node_type(val)) {
+			node->next = head;
+			head = node;
 
-		if (nullptr == last) {
+			if (nullptr == node->next) // If it is first element
+				last = new iterator(node->next);
+
+			if (nullptr != first) delete first;
 			first = new iterator(head);
-			//last = new iterator(head);
 		}
-
-		head = node;
+		else throw "'List<T>::push_front', item didn't push to the list!";
+	}
+	catch (const char *mes) {
+		std::cerr << "ERROR: " << mes << std::endl;
 	}
 }
 
 template<class T>
 void List<T>::pop_front() {
-	if (nullptr == head) {
-		node_type tmp = head->next;
+	if (nullptr != head) {
+		node_type *tmp = head->next;
 
 		delete head;
 		head = tmp;
+
+		if (nullptr != first) delete first;
+		first = new iterator(head);
 	}
 }
 
 template<class T>
 void List<T>::remove(const T val) {
+	iterator obj(new node_type(val)), *i = first;
 
+	//while (*i != obj) 
+	//	(*i)++;
 }
 
 
