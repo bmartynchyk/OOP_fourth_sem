@@ -2,6 +2,7 @@
 #include "references.h"
 #include <iostream>
 #include <fstream>
+//#include <list>
 
 #define WSIZE 32
 
@@ -70,6 +71,10 @@ bool UploadRefFromFile(const char *path, List<References*> &lst) {
 			delete[] pages; // because of 'new' operator
 			free(word); // because of '_strdup()' function
 
+			List<References*>::node_type *node = new List<References*>::node_type(ref);
+
+			lst.push_front(ref);
+
 			cout << *ref <<"\n";
 		}
 
@@ -87,13 +92,25 @@ bool UploadRefFromFile(const char *path, List<References*> &lst) {
 void main() {
 	List<References*> list;
 	List<References> trash;
+	List<References> lst;
 
-	int d[] = { 1, 2, 34, 5 };
-	References ref("str", 4, d);
-	cout << ref << "\n\n";
+	int d1[] = { 1, 2, 34, 5 };
+	int d2[] = { 3, 4, 36, 7 };
+	References *ref = nullptr;
 
-	UploadRefFromFile("Input.csv", list);
+	// Copy constructor, operator ==
+	//References *ref = nullptr;
+	//References r1("str111", 4, d1), r2("str111", 4, d2);
+	//References *r3 = nullptr;
+	////*r3 = r1;
+	////r1 = *r3;
+	//if (r1 == *r3) cout << "TRUE\n";
+	//else cout << "FALSE\n";
 
+	ref = new References("str111", 4, d1);
+	lst.push_front(*ref);
+	ref = new References("str222", 4, d2);
+	lst.push_front(*ref);
 
 	system("pause");
 }

@@ -18,6 +18,8 @@ public:
 	//
 
 	References(const char *wrd, int pages_nmb, int *pages); 
+	References(const References &ref); // Copy constructor
+	References();
 
 	//
 	// Public methods
@@ -32,6 +34,10 @@ public:
 	//
 	// Overloaded operators
 	//
+
+	bool operator ==(References &ref);
+	bool operator !=(References &ref);
+	References &operator =(References &ref);
 
 	friend std::ostream& operator<<(std::ostream& stream, References &obj);
 };

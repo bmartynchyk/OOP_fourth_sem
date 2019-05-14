@@ -1,5 +1,7 @@
 #include "references.h" // Module
 #include <iostream>
+#include <algorithm>
+#include <functional>
 
 //
 // Constructors
@@ -16,12 +18,31 @@ References::References(const char *wrd, int pages_nmb, int *_pages): _size(pages
 
 		word = _strdup(wrd); // Copying memory
 		for (int i = 0; i < _size; i++) pages[i] = _pages[i];
+		std::sort(pages, pages + _size, std::greater<int>());
 	}
 	catch (const char *mes) {
 		std::cerr << "ERROR: " << mes << std::endl;
 		return;
 	}
 }
+
+// Copy constructor
+References::References(const References &ref) {
+	_size = ref._size;
+	pages = new int[_size]; // Alocation memory
+	word = _strdup(ref.word); // Copying memory
+	for (int i = 0; i < _size; i++) pages[i] = ref.pages[i];
+}
+
+References::References() : _size(0), word(nullptr), pages(nullptr) { }
+
+//References::~References() {
+//	
+//	//if (nullptr == word) 
+//		//free(word);
+//	//if (nullptr == pages) 
+//		//delete[] pages;
+//}
 
 //
 // Public methods
@@ -64,6 +85,65 @@ bool References::SetNewPages(int num, int* _pages) {
 //
 // Overloaded operators
 //
+
+bool References::operator ==(References &ref) {
+	try {
+		bool res = true;
+
+		if (!this) throw "'operator ==(References &ref)', calling object is NULL!";
+		if (&ref == nullptr) throw "'operator ==(References &ref)', NULL as parameter!";
+
+		if (_size == ref._size) { // If size of array the same - compare each element of array
+			for (int i = 0; i < _size; i++)
+				if (pages[i] != ref.pages[i])
+					return false; // If only one element differs - return false
+		}
+		else res == false;
+
+		return (strstr(word, ref.word) && res);
+	}
+	catch (const char *mes) {
+		std::cerr << "ERROR: " << mes << std::endl;
+		return false;
+	}
+}
+
+bool References::operator!=(References &ref) {
+	try {
+		if (!this) throw "'operator !=(References &ref)', calling object is NULL!";
+		if (&ref == nullptr) throw "'operator !=(References &ref)', NULL as parameter!";
+
+		return !(*this == ref);
+	}
+	catch (const char *mes) {
+		std::cerr << "ERROR: " << mes << std::endl;
+		return false;
+	}
+}
+
+References &References::operator=(References &ref) {
+	try {
+		if (!this) throw "'operator =(References &ref)', calling object is NULL!";
+		if (&ref == nullptr) throw "'operator =(References &ref)', NULL as parameter!";
+
+		if (this != &ref) { // If objects are different - modify this
+			this->_size = ref._size;
+
+			free(this->word); // Memory release
+			delete[] pages;
+
+			this->word = _strdup(ref.word); // Memory copying
+			this->pages = new int[_size];
+			for (int i = 0; i < _size; i++) pages[i] = ref.pages[i];
+		}
+
+		return *this;
+	}
+	catch (const char *mes) {
+		std::cerr << "ERROR: " << mes << std::endl;
+		return *this;
+	}
+}
 
 std::ostream &operator<<(std::ostream & stream, References & obj)  {
 	try {
