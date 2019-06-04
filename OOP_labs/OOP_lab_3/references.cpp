@@ -28,10 +28,19 @@ References::References(const char *wrd, int pages_nmb, int *_pages): _size(pages
 
 // Copy constructor
 References::References(const References &ref) {
-	_size = ref._size;
-	pages = new int[_size]; // Alocation memory
-	word = _strdup(ref.word); // Copying memory
-	for (int i = 0; i < _size; i++) pages[i] = ref.pages[i];
+	try {
+
+		if (&ref == nullptr) throw "";
+
+		_size = ref._size;
+		pages = new int[_size]; // Alocation memory
+		word = _strdup(ref.word); // Copying memory
+		for (int i = 0; i < _size; i++) pages[i] = ref.pages[i];
+	}
+	catch (const char *mes) {
+		std::cerr << "ERROR: " << mes << std::endl;
+		return;
+	}
 }
 
 References::References() : _size(0), word(nullptr), pages(nullptr) { }
@@ -86,7 +95,7 @@ bool References::SetNewPages(int num, int* _pages) {
 // Overloaded operators
 //
 
-bool References::operator ==(References &ref) {
+bool References::operator ==(const References &ref) {
 	try {
 		bool res = true;
 
@@ -98,7 +107,7 @@ bool References::operator ==(References &ref) {
 				if (pages[i] != ref.pages[i])
 					return false; // If only one element differs - return false
 		}
-		else res == false;
+		else res = false;
 
 		return (strstr(word, ref.word) && res);
 	}

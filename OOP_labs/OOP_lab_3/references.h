@@ -35,7 +35,7 @@ public:
 	// Overloaded operators
 	//
 
-	bool operator ==(References &ref);
+	bool operator ==(const References &ref);
 	bool operator !=(References &ref);
 	References &operator =(References &ref);
 

@@ -93,7 +93,7 @@ bool UploadRefFromFile(const char *path, List<References*> &lst) {
 void main() {
 	List<References*> list;
 	List<References> trash;
-	List<References> lst;
+	List<References> lst, ls1;
 
 	int d1[] = { 1, 2, 34, 5 };
 	int d2[] = { 3, 4, 36, 7 };
@@ -108,12 +108,37 @@ void main() {
 	//if (r1 == *r3) cout << "TRUE\n";
 	//else cout << "FALSE\n";
 
-	ref = new References("str111", 4, d1);
+	ref = new References("1", 4, d1);
 	lst.push_front(*ref);
-	ref = new References("str222", 4, d2);
+	ref = new References("2", 3, d2);
+	lst.push_front(*ref);
+	ref = new References("3", 2, d1);
+	lst.push_front(*ref);
+	ref = new References("4", 1, d1);
 	lst.push_front(*ref);
 
-	ref = new References("str111", 4, d1);
+	ref = new References("1", 4, d1);
+
+	lst.find(*ref);
+	lst.remove(*ref);
+	
+	ref = new References("4", 1, d1);
+	lst.splice(lst.find(*ref), ls1);
+	ls1.Print();
+
+	//std::cout << "Size: " << lst.size() << std::endl;
+	//lst.Print();
+	//lst.clear();
+	
+	List<References>::iterator itr = lst.find(*ref);
+
+		//lst.begin();
+	 
+	//lst.pop_front();
+	//lst.pop_front();
+	//lst.pop_front();
+	//lst.pop_front();
+	//lst.pop_front();
 
 	lst.remove(*ref);
 
@@ -128,7 +153,9 @@ void main() {
 
 	//std::list<References>::iterator i = loo.begin();
 
-	cout << **i << "\n";
+	// Error!! with copying constructor
+	// Is it normal?
+	//cout << **i << "\n";
 
 	//ref = &(**i);
 
