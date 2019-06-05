@@ -10,8 +10,22 @@
 using namespace std;
 
 // Delete reference from list 'lst' if the number of pages less then 'page_numb'
-void DeleteRef(List<References> &lst,  int page_numb) {
+void DeleteRef(List<References> &lst, List<References> &trash, int page_numb) {
+	try {
+		List<References> tmp;
 
+		if (lst.empty()) throw "list was empty, func 'DeleteRef()'!";
+
+		for (auto itr = lst.begin(); itr != lst.end(); itr++) // Saving matching items to a temporary list 'tmp'
+			if ((*itr).data < page_numb) tmp.push_front(*itr);
+
+		for (auto itr = tmp.begin(); itr != tmp.end(); itr++) // Moving elements to trash-list
+			lst.splice(tmp.find((*itr).data), trash);
+	}
+	catch (const char *mes) {
+		std::cerr << "ERROR: " << mes << std::endl;
+		return;
+	}
 }
 
 // Edit word in reference from reference list 'lst'. Replaces word 'wrd' by 'newwrd'
@@ -33,17 +47,17 @@ void RestoreRef(List<References> &lst, List<References> &trash) {
 }
 
 // Uploads references from file 'fname' to list 'lst'
-bool UploadRefFromFile(const char *path, List<References*> &lst) {
+bool UploadRefFromFile(const char *path, List<References> &lst) {
 	try {
 		if (0 == strlen(path)) throw "path string is empty!";
 
 		std::ifstream file(path); // Checking the path string
 		if (!file.is_open()) throw "seems like path string is incorrect!";
 
-		//if (lst.empty()) {
-		//	lst.clear();
-		//	std::cout << "WARNING: list wasn't empty - old data removed and new uploaded from file!\n";
-		//}
+		if (!lst.empty()) {
+			lst.clear();
+			std::cout << "WARNING: list wasn't empty - old data removed and new uploaded from file!\n";
+		}
 
 		int *pages = nullptr, num = 0, i = 0; // Declaration variables
 		char *word = nullptr, str[WSIZE];
@@ -72,14 +86,9 @@ bool UploadRefFromFile(const char *path, List<References*> &lst) {
 			delete[] pages; // because of 'new' operator
 			free(word); // because of '_strdup()' function
 
-			List<References*>::node_type *node = new List<References*>::node_type(ref);
-
-			lst.push_front(ref);
-
-			cout << *ref <<"\n";
+			lst.push_front(*ref);
 		}
 
-		//lst.push_front();
 		return true;
 	}
 	catch (const char *mes) {
@@ -91,22 +100,21 @@ bool UploadRefFromFile(const char *path, List<References*> &lst) {
 
 
 void main() {
-	List<References*> list;
+	List<References> list;
 	List<References> trash;
+	References *ref = nullptr;
+
+	UploadRefFromFile("Input.csv", list);
+	//list.Print();
+
+	DeleteRef(list, trash, 12);
+	list.Print();
+
 	List<References> lst, ls1;
 
 	int d1[] = { 1, 2, 34, 5 };
 	int d2[] = { 3, 4, 36, 7 };
-	References *ref = nullptr;
-
-	// Copy constructor, operator ==
-	//References *ref = nullptr;
-	//References r1("str111", 4, d1), r2("str111", 4, d2);
-	//References *r3 = nullptr;
-	////*r3 = r1;
-	////r1 = *r3;
-	//if (r1 == *r3) cout << "TRUE\n";
-	//else cout << "FALSE\n";
+	
 
 	ref = new References("1", 4, d1);
 	lst.push_front(*ref);
@@ -119,10 +127,22 @@ void main() {
 
 	ref = new References("1", 4, d1);
 
+	//lst.pop_front();
+	//lst.pop_front();
+	//lst.pop_front();
+	/*lst.pop_front();*/
+
+	//auto it = lst.begin();
+	//it++;
+	for (auto itr = lst.begin(); itr != lst.end(); itr++) {
+		std::cout << (*itr).data << std::endl;
+	}
+	//if (lst.end() == it) std::cout << "TRUE\n";
+	//else std::cout << "FALSE\n";
+
 	lst.find(*ref);
-	lst.remove(*ref);
 	
-	ref = new References("4", 1, d1);
+	ref = new References("5", 1, d1);
 	lst.splice(lst.find(*ref), ls1);
 	ls1.Print();
 
@@ -140,7 +160,6 @@ void main() {
 	//lst.pop_front();
 	//lst.pop_front();
 
-	lst.remove(*ref);
 
 	//lst.pop_front();
 	//lst.pop_front();

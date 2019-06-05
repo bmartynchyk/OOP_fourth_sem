@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <iomanip>
 
 //
 // Constructors
@@ -29,8 +30,7 @@ References::References(const char *wrd, int pages_nmb, int *_pages): _size(pages
 // Copy constructor
 References::References(const References &ref) {
 	try {
-
-		if (&ref == nullptr) throw "";
+		if (&ref == nullptr) throw ""; //!!
 
 		_size = ref._size;
 		pages = new int[_size]; // Alocation memory
@@ -95,7 +95,12 @@ bool References::SetNewPages(int num, int* _pages) {
 // Overloaded operators
 //
 
-bool References::operator ==(const References &ref) {
+//!!
+bool References::operator<(const int pagesNmb) {
+	return _size < pagesNmb;
+}
+
+bool References::operator==(const References &ref) {
 	try {
 		bool res = true;
 
@@ -154,13 +159,17 @@ References &References::operator=(References &ref) {
 	}
 }
 
-std::ostream &operator<<(std::ostream & stream, References & obj)  {
+// Outputs content of class into stream
+std::ostream &operator<<(std::ostream & stream, References &obj)  {
 	try {
+		// In case if our iterator points to the end of list(it is link 'next' with nullptr 
+		//value), we will have object address as nullptr.
+		if (nullptr == &obj) throw "address of outputting object is nullptr!";
 		if (nullptr == obj.word) throw "invalid field 'word' in parameter 'obj'!";
 
-		stream << "Word: " << obj.word << "; " << obj._size << " pages: ";
+		stream << " " << std::setw(20) << std::left << obj.word << " " << std::setw(4) << obj._size << " ";
 		for (int i = 0; i < obj._size; i++)
-			if (i == obj._size - 1) stream << obj.pages[i] << ";";
+			if (i == obj._size - 1) stream << obj.pages[i];
 			else stream << obj.pages[i] << ", ";
 
 		return stream;

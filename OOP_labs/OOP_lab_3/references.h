@@ -30,11 +30,12 @@ public:
 
 	//
 	bool SetNewPages(int num, int* _pages);
-	
+
 	//
 	// Overloaded operators
 	//
 
+	bool operator < (const int pagesNmb);
 	bool operator ==(const References &ref);
 	bool operator !=(References &ref);
 	References &operator =(References &ref);

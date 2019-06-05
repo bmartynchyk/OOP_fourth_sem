@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <iomanip>
 #include "iterator.h"
 
 #ifndef _LIST_H_
@@ -9,7 +10,7 @@
 
 // L I S T   C L A S S   D E C L A R A T I O N
 template<class T> class List {
-	struct ListNode {
+	struct ListNode { // Unit of list
 		T data;
 		ListNode *next;
 
@@ -39,18 +40,19 @@ public:
 	// Returns an iterator that addresses the location succeeding the last element
 	iterator end();
 	// Returns an iterator to the first element in a list that match a specified value
-	iterator find(const T & val);
+	iterator find(const T &val);
 
 	void clear(); // Erases all the elements of a list
 	bool empty(); // Tests if a list is empty
 	int size(); // Returns the number of elements in a list
 
 	void pop_front(); //Deletes the element at the beginning of a list
-	void push_front(const T val); // Adds an element to the beginning of a list
-	void remove(const T val); 	// Erases first element in a list that match a specified value
+	void push_front(const node_type val); // Adds an element to the beginning of a list
+	void remove(const node_type val); // Erases first element in a list that match a specified value
+	void load(const char *filename); // Uploads list items from file
 
 	// Removes element from the target list and inserts it in first position of the argument list
-	void splice(iterator _Where, List<T>& _Right);
+	void splice(iterator _Where, List<T> &_Right);
 
 	// Dumps list into the screen
 	void Print();
@@ -67,7 +69,9 @@ private:
 
 
 // Constructors/Destructors
-template<class T> List<T>::List(): first(nullptr), last(nullptr) {
+template<class T> List<T>::List() {
+	first = nullptr;
+	last = nullptr;
 	head = nullptr;
 }
 
@@ -112,7 +116,6 @@ typename List<T>::iterator List<T>::find(const T &val) {
 	}
 
 	res = new iterator(ptr);
-
 	return *res;
 }
 
@@ -128,9 +131,9 @@ bool List<T>::empty() {
 	return (head == nullptr);
 }
 
-// Adding elements to list
+// Adding elements to list. It is possible to push values with types 'node_type', 'T'
 template<class T>
-void List<T>::push_front(const T val) {
+void List<T>::push_front(const node_type val) {
 	try {
 		if (node_type *node = new node_type(val)) {
 			node->next = head;
@@ -140,7 +143,7 @@ void List<T>::push_front(const T val) {
 			first = new iterator(head);
 
 			// If it is first element, create last iterator
-			if (nullptr == last) last = new iterator(head);
+			if (nullptr == last) last = new iterator(head->next);
 		}
 		else throw "'List<T>::push_front', item didn't push to the list!";
 	}
@@ -152,13 +155,13 @@ void List<T>::push_front(const T val) {
 // Removing elements from list
 template<class T>
 void List<T>::pop_front() {
-	if (nullptr != head) {
+	if (!empty()) {
 		node_type *tmp = head;
 
 		head = head->next; // Deleting current element
 		delete tmp; // Move head of list
 
-		if (head == nullptr) { // If deleted the last element
+		if (empty()) { // If deleted the last element
 			delete first;
 			delete last;
 			first = nullptr;
@@ -171,26 +174,27 @@ void List<T>::pop_front() {
 	}
 }
 
-// Removes required item from list
+// Removes first required item from list
 template<class T>
-void List<T>::remove(const T val) {
-	node_type *ptr = head, *tmp = nullptr,
-		*target = new node_type(val);
+void List<T>::remove(const node_type val) {
+	node_type *ptr = head, *tmp = nullptr;// ,
+		//*target = new node_type(val);
 
-	if (head->data == target->data) { // If target value is first
-		pop_front(); // Modifies 'head', 'first' and 'last'
+	if (empty()) return;
+	if (head->data == val.data) { // If target value is first
+		pop_front(); // Modifies 'head', iterators 'first' and 'last'
 		return;
 	}
 
 	while (ptr->next != nullptr) {
-		if ((ptr->next)->data == target->data) {
+		if ((ptr->next)->data == val.data) {
 			tmp = ptr->next; // Save target element
 			ptr->next = tmp->next;
 
 			// If removes the last element, need to modify iterator 'last'
 			if (tmp->next == nullptr) {
 				delete last;
-				last = new iterator(ptr);
+				last = new iterator(ptr->next);
 			}
 			
 			delete tmp;
@@ -204,6 +208,10 @@ void List<T>::remove(const T val) {
 // Outputs all list items
 template<class T>
 void List<T>::Print() {
+	if (empty()) return;
+
+	std::cout << std::endl<<std::setw(18) << std::left << " [WORD]" << " [NUMBER]"
+		<< std::setw(30) << std::right <<"[PAGES]\n";
 	for (node_type *i = head; i != nullptr; i = i->next) {
 		i->Print();
 		std::cout << std::endl;
@@ -213,8 +221,7 @@ void List<T>::Print() {
 // Returns current size of container
 template<class T>
 int List<T>::size() {
-	int size = 1; // +1 counting current element
-
+	int size = 0;
 	for (iterator i = begin(); i != end(); i++) size++;
 	
 	return size;
@@ -224,8 +231,26 @@ int List<T>::size() {
 //one to '_Right' list
 template<class T>
 void List<T>::splice(typename List<T>::iterator _Where, List<T> &_Right) {
-	_Right.push_front((*_Where).data);
-	remove((*_Where).data);
+	if (empty()) return; // If list is empty or iterator '_Where' is empty -
+	if (_Where.empty()) return; //stop performing function!
+
+	node_type *ptr = head;
+	bool isPresent = false;
+
+	// In case if method 'splice' used without 'find' method - search item in list.
+	while (ptr != nullptr) {
+		if (ptr->data == (*_Where).data) {
+			isPresent = true;
+			break;
+		}
+
+		ptr = ptr->next;
+	}
+
+	if(isPresent) { // Do actions if only the item is in the list
+		_Right.push_front((*_Where).data);
+		remove(*_Where);
+	}
 }
 
 #pragma endregion
