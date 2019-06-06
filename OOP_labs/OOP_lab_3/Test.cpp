@@ -1,9 +1,6 @@
 #include "list.h"
 #include "references.h"
 #include <iostream>
-#include <fstream>
-
-#include <list>
 
 
 

@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include "iterator.h"
 
 #ifndef _LIST_H_

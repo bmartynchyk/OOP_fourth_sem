@@ -1,8 +1,8 @@
 
-#include <ostream>
-
 #ifndef _REFERENCES_H_
 #define _REFERENCES_H_
+
+#include <ostream>
 
 
 
