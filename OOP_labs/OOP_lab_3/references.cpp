@@ -45,13 +45,6 @@ References::References(const References &ref) {
 
 References::References() : _size(0), word(nullptr), pages(nullptr) { }
 
-//References::~References() {
-//	
-//	//if (nullptr == word) 
-//		//free(word);
-//	//if (nullptr == pages) 
-//		//delete[] pages;
-//}
 
 //
 // Public methods
@@ -62,7 +55,7 @@ bool References::SetNewWord(const char *newwrd) {
 	try {
 		if (strlen(newwrd) == 0) throw "invalid parameter 'newwrd'!";
 
-		if (nullptr != word) delete word;
+		if (nullptr != word) free(word); // Because word allocates with '_strdup' func
 		word = _strdup(newwrd);
 
 		return true;
@@ -73,31 +66,19 @@ bool References::SetNewWord(const char *newwrd) {
 	}
 }
 
-//
-bool References::SetNewPages(int num, int* _pages) {
-	try {
-		if (0 == num) throw "invalid parameter 'newwrd'!";
-
-		if (nullptr != pages) delete pages;
-
-		//if (nullptr != word) delete word;
-		//word = _strdup(newwrd);
-
-		return true;
-	}
-	catch (const char *mes) {
-		std::cerr << "ERROR: " << mes << std::endl;
-		return false;
-	}
-}
 
 //
 // Overloaded operators
 //
 
-//!!
+// Comparing with pages number
 bool References::operator<(const int pagesNmb) {
 	return _size < pagesNmb;
+}
+
+// Comparing with word
+bool References::operator==(const char *str) {
+	return strstr(word, str);
 }
 
 bool References::operator==(const References &ref) {

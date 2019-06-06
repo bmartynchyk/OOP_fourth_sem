@@ -4,6 +4,8 @@
 #ifndef _REFERENCES_H_
 #define _REFERENCES_H_
 
+
+
 class References {
 
 private:
@@ -25,17 +27,14 @@ public:
 	// Public methods
 	//
 
-	//
 	bool SetNewWord(const char *newwrd);
-
-	//
-	bool SetNewPages(int num, int* _pages);
 
 	//
 	// Overloaded operators
 	//
 
 	bool operator < (const int pagesNmb);
+	bool operator ==(const char *str);
 	bool operator ==(const References &ref);
 	bool operator !=(References &ref);
 	References &operator =(References &ref);

@@ -6,6 +6,8 @@
 #ifndef _LIST_H_
 #define _LIST_H_
 
+#define WSIZE 32
+
 
 
 // L I S T   C L A S S   D E C L A R A T I O N
@@ -250,6 +252,58 @@ void List<T>::splice(typename List<T>::iterator _Where, List<T> &_Right) {
 	if(isPresent) { // Do actions if only the item is in the list
 		_Right.push_front((*_Where).data);
 		remove(*_Where);
+	}
+}
+
+// Uploads items from file, for class 'References'
+template<class References>
+void List<References>::load(const char *filename) {
+	try {
+		if (0 == strlen(filename)) throw "path string is empty!";
+
+		std::ifstream file(filename); // Checking the path string
+		if (!file.is_open()) throw "seems like path string is incorrect!";
+
+		if (!empty()) {
+			clear();
+			std::cerr << "WARNING: list wasn't empty - old data removed and new uploaded from file!\n";
+		}
+
+		int *pages = nullptr, num = 0, i = 0; // Declaration variables
+		char *word = nullptr, str[WSIZE];
+		References *ref;
+
+		while (!file.eof()) {
+			file.getline(str, WSIZE, ';'); // Getting 'word'
+			word = _strdup(str);
+			file.getline(str, WSIZE, ';'); // Getting 'num' of pages
+			num = atoi(str);
+
+			pages = new int[num];
+
+			for (i = 0; i < num - 1; i++) { // Getting pages
+				if (!file.getline(str, WSIZE, ';')) {
+					delete[] pages; free(word); // memory release
+					std::cerr << "invalid pages number, with reference: '" << word << "'!";
+					return;
+				}
+
+				pages[i] = atoi(str);
+			}
+			file.getline(str, WSIZE, '\n');
+			pages[num - 1] = atoi(str);
+
+			ref = new References(word, num, pages);
+			delete[] pages; // because of 'new' operator
+			free(word); // because of '_strdup()' function
+
+			push_front(*ref);
+			delete ref;
+		}
+
+	}
+	catch (const char *mes) {
+		std::cerr << "ERROR: " << mes << std::endl;
 	}
 }
 
